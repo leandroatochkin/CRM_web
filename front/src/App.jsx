@@ -4,7 +4,7 @@ import './App.css'
 import { Home, HumanResources, Locations, Purchases, Statistics, StockManagement, TaxInformation, Trasactions, Login } from './views'
 
 function App() {
-  const [count, setCount] = useState(0)
+
 
   return (
  <Routes>
