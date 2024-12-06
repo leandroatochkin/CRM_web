@@ -13,9 +13,10 @@ const [showPassword, setShowPassword] = useState(false)
 
  const navigate = useNavigate()
 
-const setUserData = userStore((state)=>state.setLoginStatus)
+const setUserData = userStore((state)=>state.setLoginInfo)
 const setLoadingStatus = uiStore((state)=>state.setLoading)
 const loadingStatus = uiStore((state)=>state.loading)
+
 
 
     const formData = useRef({
@@ -33,7 +34,7 @@ const loadingStatus = uiStore((state)=>state.loading)
         try{
             const data = await login(formData.current.username, formData.current.password)
             if(data.valid){
-                setUserData(true, data.employeeId, data.companyId, data.role)
+                setUserData(true, data.employeeId, data.companyId, data.employeeData, data.role)
                 setLoadingStatus(false)
                 navigate('/home')
             } else {

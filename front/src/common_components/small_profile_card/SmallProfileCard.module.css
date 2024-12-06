@@ -1,0 +1,32 @@
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 40%;
+    cursor: pointer;
+}
+
+.picContainer{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 5%;
+}
+
+.pic{
+    border-radius: 50%;
+    height: 15%;
+    width: 15%;
+    border: 2px solid #e0e0e0;
+}
+
+.infoContainer{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+}

@@ -1,1 +1,6 @@
 export {default as ToggleableInput} from './toggleable_input/ToggleableInput'
+export {default as Navbar} from './navbar/Navbar'
+export {default as Sidebar} from './sidebar/Sidebar'
+export {default as SmallProfileCard} from './small_profile_card/SmallProfileCard'
+export {default as Button} from './buttons/Button'
+export {default as DropPicModal} from './modals/DropPicModal'

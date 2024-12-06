@@ -4,13 +4,15 @@ export const userStore = create((set) => ({
     loggedIn: false,
     employeeId: null,
     companyId: null,
+    employeeInfo: {},
     role: null,
   
   
-    setLoginStatus: (status, employeeId, companyId, role) => set({
+    setLoginInfo: (status, employeeId, companyId, employeeInfo, role) => set({
       loggedIn: status,
       employeeId: employeeId,
       companyId: companyId,
+      employeeInfo: employeeInfo,
       role: role
     })
   
