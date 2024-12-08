@@ -17,7 +17,6 @@ const setUserData = userStore((state)=>state.setLoginInfo)
 const setLoadingStatus = uiStore((state)=>state.setLoading)
 const loadingStatus = uiStore((state)=>state.loading)
 
-useEffect(()=>{console.log(storedPassword)},[storedPassword])
 
 
 

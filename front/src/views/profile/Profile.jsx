@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { userStore } from '../../utils/stores/userStore'
 import style from './Profile.module.css'
 import { uiStore } from '../../utils/stores/uiStore'
-import { Button, DropPicModal, ChangePasswordModal } from '../../common_components'
+import { Button, DropPicModal, ChangePasswordModal, PasswordResetModal } from '../../common_components'
 import { host, profilePics } from '../../utils/async_functions'
 
 
@@ -16,7 +16,7 @@ const Profile = () => {
 
     console.log(userData)
 
-    const modalsArr = [<DropPicModal />, <ChangePasswordModal />]
+    const modalsArr = [<DropPicModal />, <ChangePasswordModal />, <PasswordResetModal />]
 
     const handleClick = (modal) =>{
         setModal(modal)
@@ -50,7 +50,7 @@ const Profile = () => {
                  </fieldset>
             </div>
             <div className={style.buttonContainer}>
-            <Button text={language.ui.request_password_reset} />
+            <Button text={language.ui.request_password_reset} handler={()=>handleClick(2)}/>
             <Button text={language.ui.change_password} handler={()=>handleClick(1)}/>
             <Button text={language.ui.change_picture} handler={()=>handleClick(0)}/>
             </div>

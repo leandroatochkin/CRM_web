@@ -5,3 +5,4 @@ export {default as SmallProfileCard} from './small_profile_card/SmallProfileCard
 export {default as Button} from './buttons/Button'
 export {default as DropPicModal} from './modals/DropPicModal'
 export {default as ChangePasswordModal} from './modals/ChangePasswordModal'
+export {default as PasswordResetModal} from './modals/PasswordResetModal'

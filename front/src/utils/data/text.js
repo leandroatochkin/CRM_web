@@ -16,6 +16,7 @@ export const es_text = {
     old_password: 'contraseña anterior',
     new_password: 'contraseña nueva',
     confirm_password: 'confirmar contraseña',
+    request_password_reset_2: '¿Solicitar blanqueo de contraseña?',
     },
     errors:{
         file_size_too_big: 'El archivo es demasiado grande',
