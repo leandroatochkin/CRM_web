@@ -10,6 +10,7 @@ const routes = require('./routes.cjs')
 const centralizedErrorHandler = require('./middleware/error_handler.cjs')
 
 
+app.use('/files', express.static(path.join(__dirname, 'files')));
 
 
 const allowedOrigins = [

@@ -88,11 +88,6 @@
         color: #e0e0e0;
     }
 
-    .inputLine{
-        display: flex;
-        width: 100%;
-        margin-bottom: 2%;
-    }
 
     .inputWrong{
         border-radius: 8px;

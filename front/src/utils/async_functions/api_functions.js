@@ -51,3 +51,23 @@ export const uploadProfilePic = async (file, userId) => {
         throw error; // Re-throw the error for the caller to handle
     }
 }
+
+export const changePassword = async (employeeId, oldPassword, newPassword) => {
+    try{
+        const response = await fetch(api.changePassword,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+        },
+        body: JSON.stringify({employeeId, oldPassword, newPassword})
+    })
+
+    const data = await response.json()
+    console.log(data)
+    return data  
+      
+    } catch (error) {
+        console.error(error);
+    }
+}

@@ -1,30 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import style from './DropPicModal.module.css'
 import { uploadProfilePic } from '../../utils/async_functions/api_functions';
-import { setLoading, employeeId, setError, error } from '../../utils/stores';
+import { setLoading, employeeId, setError, error, language, setOpenModal, loading } from '../../utils/stores';
+import Backdrop from './Backdrop';
 import {Button} from '../../common_components';
+import { MoonLoader } from 'react-spinners';
 
 const MAX_FILE_SIZE = 2 * 256 * 256 // 130kb
 
 const DropPicModal = () => {
     const [image, setImage] = useState(null);
-    const [error, setError] = useState(null);
     const [dragActive, setDragActive] = useState(false);
 
     const setLoadingAnimation = setLoading()
+    const loadingAnimation = loading()
     const retrieveEmployeeId = employeeId()
+    const text = language()
+    const closeModal = setOpenModal()
+    const setLocalError = setError()
+    const localError = error()
     
   
     const validateFile = (file) => {
       if (file.size > MAX_FILE_SIZE) {
-        setError('File size exceeds the 130kb limit.');
+        setLocalError('File size exceeds the 130kb limit.');
+        alert(text.errors.file_size_too_big)
         return false;
       }
       if (!file.type.startsWith('image/')) {
-        setError('Only image files are allowed.');
+        setLocalError('Only image files are allowed.');
+        alert(text.errors.file_type_not_allowed)
         return false;
       }
-      setError(null); // Reset errors if the file is valid
+      setLocalError(null); // Reset errors if the file is valid
       return true;
     };
   
@@ -73,76 +81,57 @@ const DropPicModal = () => {
             setLoadingAnimation(false)
             setImage(null)
         } catch(e){
-            console.log(e)
-            setError(e.message)
+          setLocalError(e.message)
+          alert(e.message)
         }
         
     }
 
 
   return (
-    <div className={style.backdrop}>
+    <Backdrop>
         <div className={style.modal}>
-            {/* <input type='file' className={style.dropfield}/> */}
-            <form
-      onDragEnter={handleDrag}
-      onSubmit={(e) => e.preventDefault()}
-      style={{
-        border: '2px dashed #ccc',
-        borderRadius: '5px',
-        padding: '20px',
-        textAlign: 'center',
-        position: 'relative',
-      }}
-    >
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-        style={{
-          opacity: 0,
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          cursor: 'pointer',
-        }}
-      />
-      <p>{image ? 'Image Uploaded Successfully!' : 'Drag & Drop an image or click to select'}</p>
-      {dragActive && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0,0,0,0.1)',
-            zIndex: 10,
-          }}
-          onDragOver={handleDrag}
-          onDragLeave={handleDrag}
-          onDrop={handleDrop}
-        />
-      )}
-      {error && (
-        <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>
-      )}
-      {image && !error && (
-        <img
-          src={image}
-          alt="Preview"
-          style={{
-            marginTop: '10px',
-            maxWidth: '100%',
-            maxHeight: '200px',
-            borderRadius: '5px',
-          }}
-        />
-      )}
-    </form>
-    <Button text={'prueba'} handler={handleUpload}/>
-        </div>
+            {loadingAnimation ? (<MoonLoader />) : (
+              <form
+                  onDragEnter={handleDrag}
+                  onSubmit={(e) => e.preventDefault()}
+                  className={style.dropfield}
+            >
+                        <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className={style.invisibleInput}
+                        />
+              
+              {dragActive && (
+                <div
+                  className={style.invisibleInputActive}
+                  onDragOver={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDrop={handleDrop}
+                />
+              )}
+              {localError && (
+                <p style={{ color: 'red', marginTop: '10px' }}>{localError}</p>
+              )}
+              {image && (
+                <img
+                  src={image}
+                  alt="Preview"
+                  className={style.previewImage}
+                />
+              )}
+              
+                    </form>
+            )}
+    <p>{image ? text.ui.image_uploaded : text.ui.select_picture}</p>
+    <div className={style.buttonContainer}>
+    <Button text={text.ui.upload_picture} handler={handleUpload}/>
+    <Button text={text.ui.cancel} handler={()=>closeModal(false)}/>
     </div>
+        </div>
+        </Backdrop>
   )
 }
 

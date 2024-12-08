@@ -13,7 +13,7 @@ export const userStore = create((set) => ({
       employeeId: employeeId,
       companyId: companyId,
       employeeInfo: employeeInfo,
-      role: role
+      role: role,
     })
   
   }));

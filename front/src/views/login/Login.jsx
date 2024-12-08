@@ -9,13 +9,15 @@ import { MoonLoader } from 'react-spinners';
 
 
 const Login = () => {
-const [showPassword, setShowPassword] = useState(false)
+
 
  const navigate = useNavigate()
 
 const setUserData = userStore((state)=>state.setLoginInfo)
 const setLoadingStatus = uiStore((state)=>state.setLoading)
 const loadingStatus = uiStore((state)=>state.loading)
+
+useEffect(()=>{console.log(storedPassword)},[storedPassword])
 
 
 
@@ -34,6 +36,7 @@ const loadingStatus = uiStore((state)=>state.loading)
         try{
             const data = await login(formData.current.username, formData.current.password)
             if(data.valid){
+                console.log(data)
                 setUserData(true, data.employeeId, data.companyId, data.employeeData, data.role)
                 setLoadingStatus(false)
                 navigate('/home')
@@ -68,9 +71,9 @@ const loadingStatus = uiStore((state)=>state.loading)
                                   <input type='text' name='username' placeholder='username' className={style.input} onChange={handleChange}/>
                   
                   
-                                  <div className={style.inputLine}>
-                                      <ToggleableInput handleChange={handleChange}/>
-                                  </div>
+                              
+                                      <ToggleableInput handleChange={handleChange} placeholder={'password'} name={'password'}/>
+                                
                                   {/* <p className={invalidCredentials ? style.invalidCredentials : style.hidden}>{language.error_messages.invalid_credentials}</p> */}
                                 </div>
                                 <div className={style.loginBtnContainer}>

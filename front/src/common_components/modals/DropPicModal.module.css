@@ -1,17 +1,3 @@
-.backdrop{
-    width: 100vw;
-    height: 100vh;
-    backdrop-filter: blur(5px);
-    background-color: rgba(0,0,0,0.3);
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9;
-}
-
 .modal{
     background-color: #02364a;
     border-radius: 32px;
@@ -28,4 +14,37 @@
     height: 60%;
     width: 95%;
     border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.invisibleInput{
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.invisibleInputActive{
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+.previewImage{
+    position: absolute;
+    margin-top: 10px;
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 5px;
+}
+
+.buttonContainer{
+    display: flex;
+    width: 50%;
+    justify-content: center;
+    gap: 5%;
 }

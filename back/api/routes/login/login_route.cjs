@@ -2,58 +2,64 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../db.cjs');
 const { ValidationError, ServerError } = require('../../../middleware/error_models.cjs');
+const bcrypt = require('bcrypt');
 
-router.post('/', (req, res, next) => {
-    const { username, password } = req.body;
+// Convert db.query into a Promise-based function
+const queryAsync = (query, params) =>
+  new Promise((resolve, reject) => {
+    db.query(query, params, (err, results) => {
+      if (err) return reject(err);
+      resolve(results);
+    });
+  });
 
-    console.log(username, password);
+router.post('/', async (req, res, next) => {
+  const { username, password } = req.body;
 
-    if (!username) {
-        throw new ValidationError("Username is required");
-    }
+  if (!username) {
+    return next(new ValidationError("Username is required"));
+  }
 
+  try {
     const firstQuery = 'SELECT employee_id, user_name, password, role, company_id FROM table_users_data WHERE user_name = ?';
     const secondQuery = 'SELECT * FROM table_employee_data WHERE id = ?';
 
-    db.query(firstQuery, [username], (err, userResults) => {
-        if (err) {
-            console.error('Database query error:', err);
-            return next(new ServerError('Database query error', err));
-        }
+    // Perform the first database query
+    const userResults = await queryAsync(firstQuery, [username]);
 
-        if (userResults.length === 0) {
-            console.log('User does not exist');
-            return res.status(200).json({ exists: false });
-        }
+    if (userResults.length === 0) {
+      console.log('User does not exist');
+      return res.status(200).json({ exists: false });
+    }
 
-        const user = userResults[0];
-        const { employee_id: employeeId, password: storedPassword, role, company_id: companyId } = user;
+    const user = userResults[0];
+    const { employee_id: employeeId, password: storedPassword, role, company_id: companyId } = user;
 
-        if (storedPassword !== password) {
-            console.log('Invalid password');
-            return res.status(200).json({ exists: true, valid: false });
-        }
+    // Check the password using bcrypt
+    const isMatch = await bcrypt.compare(password, storedPassword);
 
-        // Valid user, proceed to fetch employee data
-        db.query(secondQuery, [employeeId], (err, employeeResults) => {
-            if (err) {
-                console.error('Database query error:', err);
-                return next(new ServerError('Database query error', err));
-            }
+    if (!isMatch) {
+      return res.status(200).json({ exists: true, valid: false });
+    }
 
-            const employeeData = employeeResults.length > 0 ? employeeResults[0] : null;
+    // Perform the second database query
+    const employeeResults = await queryAsync(secondQuery, [employeeId]);
+    const employeeData = employeeResults.length > 0 ? employeeResults[0] : null;
 
-            // Send response only after both queries are processed
-            return res.status(200).json({
-                exists: true,
-                valid: true,
-                role,
-                companyId,
-                employeeId,
-                employeeData,
-            });
-        });
+    // Send the response
+    return res.status(200).json({
+      exists: true,
+      valid: true,
+      role,
+      companyId,
+      employeeId,
+      employeeData,
+      storedPassword
     });
+  } catch (error) {
+    console.error('Error processing request:', error);
+    return next(new ServerError('Error processing request', error));
+  }
 });
 
 module.exports = router;

@@ -5,7 +5,6 @@ import { uiStore } from '../../utils/stores/uiStore'
 import { HumanResources, Locations, Profile, Purchases, Statistics, StockManagement, TaxInformation, Trasactions } from '../../views'
 
 const Home = () => {
-const [displayComponent, setDisplayComponent] = useState(null)
 
 const componentArr = [<HumanResources />, <StockManagement/>, <Purchases/>, <Locations />, <Trasactions/>, <Statistics/>, <TaxInformation />, <Profile />]
 

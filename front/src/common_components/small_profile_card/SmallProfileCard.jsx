@@ -2,6 +2,7 @@ import React from 'react'
 import { userStore } from '../../utils/stores/userStore'
 import style from './SmallProfileCard.module.css'
 import { uiStore } from '../../utils/stores/uiStore'
+import { host, profilePics } from '../../utils/async_functions'
 
 
 const SmallProfileCard = () => {
@@ -12,7 +13,7 @@ const setDisplayElement = uiStore((state)=>state.setDisplayElement)
   return (
     <div className={style.container} onClick={()=>setDisplayElement(7)}>
         <div className={style.picContainer}>
-            <img src={userData.profilePic_path === null ? '/public/images/no-pic.jpg' : userData.profilePic_path} alt="profile" className={style.pic} />
+            <img src={userData.profilePic_path === null ? '/public/images/no-pic.jpg' : `${host}${profilePics}${userData.profilePic_path}`} alt="profile" className={style.pic} />
         </div>
         <div className={style.infoContainer}>
             <h2>{`${userData.name} ${userData.last_name}`}</h2>

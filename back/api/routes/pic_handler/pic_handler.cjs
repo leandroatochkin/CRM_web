@@ -2,23 +2,22 @@ require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const router = express.Router();
+const db = require('../../db.cjs')
+const { ValidationError, ServerError } = require('../../../middleware/error_models.cjs');
 
+const PROFILE_PIC_FOLDER = process.env.PROFILE_PIC_FOLDER;
 
-const PROFILE_PIC_FOLDER =  process.env.PROFILE_PIC_FOLDER;
+const updatePicQuery = `UPDATE  table_employee_data SET  profilePic_path = ? WHERE id = ?`;
 
-
-// Set up storage configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, PROFILE_PIC_FOLDER); // Directory to save files
   },
   filename: (req, file, cb) => {
-    const userId = req.body.userId; // Multer will populate this
-    if (!userId) {
-      return cb(new Error('User ID is required to save the file.'));
-    }
-    cb(null, `${userId}-${file.originalname}`); // Append userId to the file name
+    // Temporary placeholder filename
+    cb(null, `temp-${Date.now()}-${file.originalname}.jpg`);
   },
 });
 
@@ -27,7 +26,7 @@ const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image/')) {
     cb(null, true);
   } else {
-    cb(new Error('Only image files are allowed!'), false);
+    cb(new ValidationError('Only image files are allowed!'), false);
   }
 };
 
@@ -39,30 +38,45 @@ const upload = multer({
 });
 
 // POST route for file upload
-router.post(
-  '/',
-  upload.single('image'), // Use Multer to handle 'image' file input
-  (req, res) => {
-    try {
-      const file = req.file;
-      const userId = req.body.userId; // Access userId from form-data
+router.post('/', upload.single('image'), async (req, res, next) => {
+  try {
+    const file = req.file;
+    const userId = req.body.userId;
 
-      if (!file) {
-        return res.status(400).json({ message: 'Please upload a file!' });
-      }
-
-      if (!userId) {
-        return res.status(400).json({ message: 'User ID is required!' });
-      }
-
-      res.status(200).json({
-        message: 'File uploaded successfully!',
-        filePath: `../../../files/employee_pics/${file.filename}`, // Path to access the file
-      });
-    } catch (error) {
-      res.status(500).json({ message: 'Error uploading file', error: error.message });
+    if (!file) {
+      return next(new ValidationError('No file uploaded!'));
     }
-  }
-);
+
+    if (!userId) {
+      // Remove the temporary file if userId is missing
+      fs.unlinkSync(file.path);
+      return next(new ValidationError('Missing userId in request body!'));
+    }
+
+    // Get the original file extension
+    const originalExtension = path.extname(file.originalname); // e.g., ".jpg", ".png"
+    const newFilename = `${userId}-${Date.now()}.jpg`;
+    const newFilePath = path.join(PROFILE_PIC_FOLDER, newFilename);
+
+    // Rename the file with the correct extension
+    fs.renameSync(file.path, newFilePath);
+
+    res.status(200).json({
+      message: 'File uploaded successfully!',
+      filePath: `../../../files/employee_pics/${newFilename}`, // Path to access the file
+    });
+
+    db.query(updatePicQuery,[newFilename, userId], (err, results) => {
+        if (err) {
+            console.log(err);
+            return next(new ServerError('Error updating profile picture!'))
+            }
+            });
+
+  } catch (error) {
+    return next(new ServerError('Error updating profile picture!'))
+  } 
+
+});
 
 module.exports = router;

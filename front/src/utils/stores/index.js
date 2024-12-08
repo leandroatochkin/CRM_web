@@ -27,3 +27,5 @@ export const employeeInfo = () => userStore((state) => state.employeeInfo);
 
 export const role = () => userStore((state) => state.role);
 
+export const storedPassword = () => userStore((state)=>state.storedPassword)
+
